@@ -23,21 +23,23 @@ function Register() {
     try {
       setLoading(true);
 
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/register`,
-        {
-          name,
-          email,
-          password,
-          secret,
-        }
-      );
-      setName("");
-      setEmail("");
-      setPassword("");
-      setSecret("");
-      setOk(data.ok);
-      setLoading(false);
+      const { data } = await axios.post(`/register`, {
+        name,
+        email,
+        password,
+        secret,
+      });
+
+      if (data.error) {
+        toast.error(data.error);
+      } else {
+        setName("");
+        setEmail("");
+        setPassword("");
+        setSecret("");
+        setOk(data.ok);
+        setLoading(false);
+      }
     } catch (err) {
       toast.error(err.response.data);
       // toast.error(err.response.data);

@@ -21,30 +21,32 @@ function Login() {
     try {
       setLoading(true);
 
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/login`,
-        {
-          email,
-          password,
-        }
-      );
-      setState({
-        user: data.user,
-        token: data.token,
+      const { data } = await axios.post(`/login`, {
+        email,
+        password,
       });
-      
-      // save in local storage
-      window.localStorage.setItem("auth", JSON.stringify(data));
-      router.push("/user/dashboard");
 
+      if (data.error) {
+        toast.error(data.error);
+        setLoading(false);
+      } else {
+        setState({
+          user: data.user,
+          token: data.token,
+        });
+
+        // save in local storage
+        window.localStorage.setItem("auth", JSON.stringify(data));
+        router.push("/user/dashboard");
+      }
     } catch (err) {
-      toast.error(err.response.data);
+      console.log(err);
+      toast.error(err.response);
       setLoading(false);
     }
   };
 
-  if (state && state.token) router.push('/')
-  
+  if (state && state.token) router.push("/");
 
   return (
     <div className="container-fluid">
@@ -76,6 +78,16 @@ function Login() {
             Not yet registered?{" "}
             <Link href="/register">
               <a>Register</a>
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col">
+          <p className="text-center">
+            <Link href="/forgot-password">
+              <a className="text-danger">Forgot password?</a>
             </Link>
           </p>
         </div>
